@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Books</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBF3EC; --paper-2:#FFFAF6; --ink:#3B2A24; --ink-2:#8A6B60; --line:#EBD9CD;
+  --lapis:#C7673F; --lapis-soft:#F9E2D5; --saffron:#D9A066; --saffron-soft:#FBEBDD;
+  --rose:#B3467F; --rose-soft:#F7DFEC; --ok:#2F9A97; --ok-soft:#DCF0EE;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#221816; --paper-2:#2C201D; --ink:#F6E9E1; --ink-2:#C4A99C; --line:#3F2E29;
+    --lapis:#E08A63; --lapis-soft:#4A2E24; --saffron:#E6B784; --saffron-soft:#4A3626;
+    --rose:#E07AB4; --rose-soft:#4A2A3C; --ok:#5FC7C3; --ok-soft:#1F3E3D;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#221816; --paper-2:#2C201D; --ink:#F6E9E1; --ink-2:#C4A99C; --line:#3F2E29;
+  --lapis:#E08A63; --lapis-soft:#4A2E24; --saffron:#E6B784; --saffron-soft:#4A3626;
+  --rose:#E07AB4; --rose-soft:#4A2A3C; --ok:#5FC7C3; --ok-soft:#1F3E3D;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Karla,system-ui,sans-serif;font-size:15px;line-height:1.4;height:100%}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lapis);outline-offset:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding:12px 16px 10px}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:28px;margin:0;letter-spacing:.01em}
+.total{color:var(--ink-2);font-size:13px}
+.loc{display:flex;margin-top:10px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper-2)}
+.loc button{flex:1;padding:9px 0;font-weight:500;color:var(--ink-2)}
+.loc button[aria-pressed="true"]{background:var(--lapis);color:#fff}
+.search{margin-top:10px;display:flex;gap:8px}
+.search input{flex:1}
+.tabs{display:flex;gap:18px;margin-top:10px;font-size:14px}
+.tabs button{padding:4px 0;border-bottom:2px solid transparent;color:var(--ink-2)}
+.tabs button[aria-selected="true"]{color:var(--ink);border-color:var(--lapis);font-weight:600}
+
+main{padding:0 0 90px}
+.group{font-family:"Cormorant Garamond",Georgia,serif;font-size:19px;font-weight:600;padding:18px 16px 6px;color:var(--ink-2)}
+.row{display:grid;grid-template-columns:30px 12px 1fr auto;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--paper-2)}
+.row .no{color:var(--ink-2);font-size:13px}
+.spine{width:12px;align-self:stretch;min-height:40px;border-radius:4px;background:var(--line);box-shadow:inset -2px 0 0 rgba(0,0,0,.12),inset 2px 0 0 rgba(255,255,255,.25)}
+.row .t{font-family:"Cormorant Garamond",Georgia,serif;font-size:19px;line-height:1.15;font-weight:500}
+.row .s{color:var(--ink-2);font-size:12.5px;margin-top:2px}
+.row .s.a{color:var(--lapis);font-style:italic}
+.row.hdr{border-bottom:0;padding-bottom:4px}
+.row.ed{padding:6px 16px 6px 16px;background:var(--paper);border-bottom:1px solid var(--line)}
+.row.ed .e{font-size:14px;line-height:1.2;color:var(--ink)}
+.row.ed .qty .n{font-size:24px;min-width:32px}
+.row.ed .qty button{width:30px;height:30px}
+.spine.multi{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.35) 0 3px,transparent 3px 8px)}
+.qty{display:flex;align-items:center;gap:6px}
+.qty .n{font-family:"Cormorant Garamond",Georgia,serif;font-size:32px;font-weight:600;min-width:38px;text-align:center;line-height:1}
+.qty .n.zero{color:var(--rose)}
+.qty .n.one{color:var(--lapis)}
+.qty .n.unk{color:var(--ink-2);font-size:24px}
+.qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);font-size:20px;line-height:1;display:grid;place-items:center;background:var(--paper)}
+.qty button:disabled{opacity:.35}
+.row.open{background:var(--saffron-soft)}
+.empty{padding:40px 16px;color:var(--ink-2);text-align:center}
+
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--paper-2);border-top:1px solid var(--line);border-radius:16px 16px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.15);max-height:82vh;overflow:auto;transform:translateY(100%);transition:transform .22s ease}
+.sheet.show{transform:none}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+.sheet h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:22px;margin:0 0 2px}
+.sheet .sub{color:var(--ink-2);font-size:13px;margin-bottom:12px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.acts button{padding:11px 10px;border-radius:10px;border:1px solid var(--line);background:var(--paper);font-weight:500;text-align:left}
+.acts button.take{background:var(--saffron-soft);border-color:transparent}
+.acts button.out{background:var(--rose-soft);border-color:transparent}
+.acts button.in{background:var(--ok-soft);border-color:transparent}
+.acts button:disabled{opacity:.4}
+.warn{background:var(--saffron-soft);color:var(--ink);padding:9px 12px;border-radius:8px;font-size:13.5px;margin-bottom:12px}
+.form{display:grid;gap:8px;margin-bottom:12px}
+.form .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.primary{background:var(--lapis);color:#fff;padding:12px;border-radius:10px;font-weight:600;width:100%}
+.ghost{color:var(--ink-2);padding:10px;width:100%}
+.hist{border-top:1px solid var(--line);margin-top:8px;padding-top:8px}
+.hist h3{font-size:13px;color:var(--ink-2);font-weight:500;margin:0 0 6px}
+.log{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;padding:8px 16px;border-bottom:1px solid var(--line);font-size:14px;background:var(--paper-2)}
+.log .d{color:var(--ink-2);font-size:12.5px;white-space:nowrap}
+.log .k{font-weight:600}
+.log .k.take{color:var(--lapis)} .log .k.out{color:var(--rose)} .log .k.in{color:var(--ok)}
+.log .b{font-family:"Cormorant Garamond",Georgia,serif;font-size:17px}
+.log .who{color:var(--ink-2);font-size:13px}
+.hist .log{padding:6px 0}
+.foot{position:fixed;left:0;right:0;bottom:0;padding:8px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--paper);border-top:1px solid var(--line);display:flex;gap:8px;z-index:4}
+.foot button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--paper-2);font-weight:500}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:9px 14px;border-radius:20px;font-size:14px;z-index:20;opacity:0;transition:opacity .2s}
+.toast.show{opacity:1}
+.notice{margin:16px;padding:12px 14px;border-radius:10px;background:var(--saffron-soft);font-size:14px}
+.scrim{position:fixed;inset:0;z-index:9;background:rgba(0,0,0,.25);display:none}
+.scrim.show{display:block}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>Books</h1><div class="total" id="total"></div></div>
+  <div class="loc" role="group" aria-label="Location">
+    <button id="locR" aria-pressed="true">Restaurant</button>
+    <button id="locA" aria-pressed="false">Ashram</button>
+  </div>
+  <div class="search"><input id="q" type="search" placeholder="Search title, author or number" autocomplete="off"></div>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="books">Books</button>
+    <button role="tab" aria-selected="false" data-tab="low">Last copy / missing</button>
+    <button role="tab" aria-selected="false" data-tab="log">Movements</button>
+  </div>
+</header>
+<main id="main"><div class="empty">Loading…</div></main>
+<div class="foot">
+  <button id="exportBtn">Export CSV</button>
+  <button id="addBtn">Add a book</button>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const LOCS={restaurant:"Restaurant",ashram:"Ashram"};
+const KINDS={
+  gift:{label:"Given as a gift",cls:"out",delta:-1},
+  sold:{label:"Sold",cls:"out",delta:-1},
+  donation:{label:"Given as donation",cls:"out",delta:-1},
+  taken:{label:"Taken to read",cls:"take",delta:-1},
+  returned:{label:"Returned",cls:"in",delta:+1},
+  added:{label:"Added / received",cls:"in",delta:+1},
+  count:{label:"Recount",cls:"in",delta:0},
+  moved:{label:"Moved to other location",cls:"out",delta:-1}
+};
+const GROUPS=[["catalogue","Catalogue"],["shipment","Shipment list"],["extra","Extras"]];
+
+let db=true,meId="";
+const API="https://script.google.com/macros/s/AKfycbyUlzCfU2BRdBBECDoYoEbVZc1Kv6_9HCQ4D59Q-bsH-QgwKDwdFs4njTWnXig1pBpsGg/exec";
+async function call(fn){const args=[].slice.call(arguments,1);const r=await fetch(API,{method:"POST",body:JSON.stringify({fn,args})});const d=await r.json();if(!d.ok)throw new Error(d.error||"error");return d.result;}
+function normBook(b){const q=b.qty||{};return {...b,no:String(b.no||""),qty:{restaurant:q.restaurant===""||q.restaurant==null?null:Number(q.restaurant),ashram:q.ashram===""||q.ashram==null?null:Number(q.ashram)}};}
+let busy=false;
+async function refresh(){if(busy)return;busy=true;try{const d=await call("getAll");const nb={};d.books.forEach(b=>{nb[b.id]=normBook(b);});books=nb;logs=d.logs;render();if(openId&&openId!=="__new"&&!sheetMode)drawSheet();}catch(e){console.error(e);toast("Couldn't reach the sheet");}finally{busy=false;}}
+async function saveBook(b){await call("updateBook",b);books[b.id]=normBook(b);render();}
+async function addLogEntry(l){l.id="m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);await call("addLog",l);logs.unshift(l);}
+let books={},logs=[],loc="restaurant",tab="books",q="",openId=null,sheetMode=null;
+let unsubB=null,unsubL=null;
+
+// ---------- rendering ----------
+function fold(s){return String(s==null?"":s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[\u1e00-\u1eff]/g,c=>c.normalize("NFD").replace(/[\u0300-\u036f]/g,"")).replace(/\u0142/g,"l");}
+function years(t){const m=String(t||"").match(/\b(19|20)\d{2}\b/g);return m?[...new Set(m)].join(", "):"";}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function qtyOf(b){const v=b.qty&&b.qty[loc];return (v===null||v===undefined)?null:v;}
+function sortKey(b){const n=parseInt(b.no,10);return isNaN(n)?1e6:n;}
+function keyOf(b){return (b.parent&&books[b.parent])?b.parent:b.id;}
+function edLabel(b){return b.edition||years(b.spec)||b.spec||"";}
+function groupsOf(){
+  const g={};
+  Object.values(books).forEach(b=>{const k=keyOf(b);(g[k]=g[k]||[]).push(b);});
+  Object.values(g).forEach(arr=>arr.sort((a,b)=>(a.id===keyOf(a)?0:1)-(b.id===keyOf(b)?0:1)||String(years(a.spec)||a.edition||"").localeCompare(String(years(b.spec)||b.edition||""))));
+  return g;
+}
+function matches(b,s){return !s||fold(b.title).includes(s)||fold(b.author).includes(s)||fold(b.spec).includes(s)||fold(b.edition).includes(s)||fold(b.no)===s;}
+function render(){
+  const m=$("#main");
+  const total=Object.values(books).reduce((a,b)=>a+(qtyOf(b)||0),0);
+  $("#total").textContent=Object.keys(books).length?`${total} books in ${LOCS[loc]}`:"";
+  if(tab==="log"){renderLog(m);return;}
+  const s=fold(q.trim());
+  const g=groupsOf();
+  let groups=Object.values(g).filter(arr=>arr.some(b=>matches(b,s)));
+  if(tab==="low")groups=groups.filter(arr=>arr.some(b=>{const n=qtyOf(b);return n===null||n<=1;}));
+  groups.sort((a,b)=>sortKey(a[0])-sortKey(b[0]));
+  if(!groups.length){m.innerHTML=`<div class="empty">${Object.keys(books).length?"Nothing matches.":"No books yet."}</div>`;return;}
+  let html="";
+  for(const [gk,gl] of GROUPS){
+    const gr=groups.filter(arr=>(arr[0].group||"catalogue")===gk);
+    if(!gr.length)continue;
+    html+=`<div class="group">${gl}</div>`;
+    for(const arr of gr){
+      const p=arr[0];
+      if(arr.length===1){html+=rowHtml(p,false);continue;}
+      const tot=arr.reduce((a,b)=>a+(qtyOf(b)||0),0);
+      const any=arr.some(b=>qtyOf(b)!==null);
+      html+=`<div class="row hdr"><div class="no">${esc(p.no||"")}</div><div class="spine multi" style="${p.color?"background:"+esc(p.color):""}"></div>
+        <div><div class="t">${esc(p.title)}</div>${p.author?`<div class="s a">${esc(p.author)}</div>`:""}<div class="s">${arr.length} editions</div></div>
+        <div class="qty"><div class="n ${any?"":"unk"}">${any?tot:"?"}</div></div></div>`;
+      for(const b of arr)html+=rowHtml(b,true);
+    }
+  }
+  m.innerHTML=html;
+}
+function rowHtml(b,sub){
+  const n=qtyOf(b);
+  const cls=n===null?"unk":n===0?"zero":n===1?"one":"";
+  const lbl=sub?edLabel(b):(b.author?"":"");
+  return `<div class="row ${sub?"ed":""} ${openId===b.id?"open":""}" data-id="${esc(b.id)}">
+    <div class="no">${sub?(b.no&&b.no!==books[keyOf(b)].no?esc(b.no):""):esc(b.no||"")}</div><div class="spine" style="${b.color?"background:"+esc(b.color):""}" title="cover colour"></div>
+    <button class="txt" data-open="${esc(b.id)}" style="text-align:left">${sub?`<div class="e">${esc(lbl)||"edition"}</div>`:`<div class="t">${esc(b.title)}</div>${b.author?`<div class="s a">${esc(b.author)}</div>`:""}${years(b.spec)?`<div class="s">${esc(years(b.spec))}</div>`:""}`}</button>
+    <div class="qty">
+      <button data-dec="${esc(b.id)}" aria-label="One less" ${n===null||n<=0?"disabled":""}>−</button>
+      <div class="n ${cls}">${n===null?"?":n}</div>
+      <button data-inc="${esc(b.id)}" aria-label="One more">+</button>
+    </div></div>`;
+}
+function renderLog(m){
+  const s=fold(q.trim());
+  const rows=logs.filter(l=>l.location===loc).filter(l=>!s||fold((books[l.bookId]||{}).title).includes(s)||fold(l.who).includes(s));
+  if(!rows.length){m.innerHTML='<div class="empty">No movements recorded yet.</div>';return;}
+  m.innerHTML=rows.map(l=>logRow(l,true)).join("");
+}
+function logRow(l,withTitle){
+  const k=KINDS[l.kind]||{label:l.kind,cls:""};
+  const b=books[l.bookId]||{title:"(deleted book)"};
+  const who=[l.who,l.note].filter(Boolean).join(" · ");
+  return `<div class="log"><div class="d">${esc(l.date||"")}</div>
+    <div>${withTitle?`<div class="b">${esc(b.title)}</div>`:""}<span class="k ${k.cls}">${esc(k.label)}</span>${l.delta&&l.kind!=="count"?` <span class="who">(${l.delta>0?"+":""}${l.delta})</span>`:l.kind==="count"?` <span class="who">→ ${l.newQty}</span>`:""}${who?`<div class="who">${esc(who)}</div>`:""}</div>
+    <div class="d">${l.kind==="taken"&&!l.returned?`<button data-return="${esc(l.id)}" style="color:var(--lapis);font-weight:600">Returned</button>`:""}</div></div>`;
+}
+
+// ---------- sheet ----------
+function today(){const d=new Date();return d.toISOString().slice(0,10);}
+function openSheet(id){
+  openId=id;sheetMode=null;drawSheet();$("#sheet").classList.add("show");$("#scrim").classList.add("show");render();
+}
+function closeSheet(){openId=null;sheetMode=null;$("#sheet").classList.remove("show");$("#scrim").classList.remove("show");render();}
+function drawSheet(){
+  const sh=$("#sheet");
+  if(openId==="__new"){
+    sh.innerHTML=`<h2>Add a book</h2><div class="sub">For titles not on any list.</div>
+      <div class="form"><input id="f_title" placeholder="Title"><input id="f_author" placeholder="Author"><input id="f_edition" placeholder="Edition (year, colour) – optional"><input id="f_parent" placeholder="Edition of existing book no. (optional)"><input id="f_spec" placeholder="Publisher, ISBN, notes (optional)">
+      <div class="two"><input id="f_no" placeholder="No. (optional)"><select id="f_group"><option value="extra">Extras</option><option value="catalogue">Catalogue</option><option value="shipment">Shipment list</option></select></div>
+      <input id="f_qty" type="number" min="0" placeholder="How many in ${LOCS[loc]}"></div>
+      <button class="primary" id="f_save">Add</button><button class="ghost" id="f_cancel">Cancel</button>`;
+    $("#f_save").onclick=addBook;$("#f_cancel").onclick=closeSheet;return;
+  }
+  const b=books[openId];if(!b){closeSheet();return;}
+  const n=qtyOf(b);
+  const lastCopy=n!==null&&n<=1;
+  const hist=logs.filter(l=>l.bookId===b.id&&l.location===loc).slice(0,8);
+  if(!sheetMode){
+    sh.innerHTML=`<h2>${esc(b.title)}${b.edition?` <span style="color:var(--lapis);font-size:17px">– ${esc(b.edition)}</span>`:""}</h2><div class="sub">${b.author?esc(b.author)+" · ":""}${esc(b.spec||"")}${b.spec?" · ":""}${LOCS[loc]}: ${n===null?"not counted yet":n+" cop"+(n===1?"y":"ies")}</div>
+      ${lastCopy?`<div class="warn">${n===0?"None left here.":"Last copy - keep it. It can be read but not given away."}</div>`:""}
+      <div class="acts">
+        <button class="take" data-k="taken" ${n===null||n<1?"disabled":""}>Taken to read</button>
+        <button class="out" data-k="gift" ${lastCopy||n===null?"disabled":""}>Gift</button>
+        <button class="out" data-k="sold" ${lastCopy||n===null?"disabled":""}>Sold</button>
+        <button class="out" data-k="donation" ${lastCopy||n===null?"disabled":""}>Donation</button>
+        <button class="out" data-k="moved" ${lastCopy||n===null?"disabled":""}>Moved to ${loc==="restaurant"?"Ashram":"Restaurant"}</button>
+        <button class="in" data-k="added">Added / received</button>
+        <button data-k="count">Set the count</button>
+        <button data-k="edit">Edit title / details</button>
+      </div>
+      ${hist.length?`<div class="hist"><h3>Recent movements here</h3>${hist.map(l=>logRow(l,false)).join("")}</div>`:""}
+      <button class="ghost" id="s_close">Close</button>`;
+    sh.querySelectorAll("[data-k]").forEach(x=>x.onclick=()=>{sheetMode=x.dataset.k;drawSheet();});
+    $("#s_close").onclick=closeSheet;return;
+  }
+  const k=sheetMode;
+  if(k==="edit"){
+    sh.innerHTML=`<h2>Edit</h2><div class="form"><input id="f_title" value="${esc(b.title)}"><input id="f_author" placeholder="Author" value="${esc(b.author||"")}"><input id="f_edition" placeholder="Edition (e.g. GVP 2021, white cover)" value="${esc(b.edition||"")}"><input id="f_parent" placeholder="Edition of book no. (leave empty if main)" value="${esc(b.parent&&books[b.parent]?books[b.parent].no:"")}"><input id="f_spec" placeholder="Publisher, ISBN, notes" value="${esc(b.spec||"")}"><input id="f_no" placeholder="No." value="${esc(b.no||"")}"><label style="display:flex;align-items:center;gap:10px;color:var(--ink-2);font-size:14px">Cover colour <input id="f_color" type="color" value="${esc(b.color||"#cccccc")}" style="width:52px;height:36px;padding:2px"></label></div>
+      <button class="primary" id="f_save">Save</button><button class="ghost" id="f_cancel">Back</button>`;
+    $("#f_save").onclick=async()=>{const pn=$("#f_parent").value.trim();const par=pn?Object.values(books).find(x=>x.no===pn&&x.id!==b.id&&!x.parent):null;const nb={...b,title:$("#f_title").value.trim()||b.title,author:$("#f_author").value.trim(),edition:$("#f_edition").value.trim(),spec:$("#f_spec").value.trim(),no:$("#f_no").value.trim(),color:$("#f_color").value};if(par)nb.parent=par.id;else delete nb.parent;await saveBook(nb);toast("Saved");sheetMode=null;drawSheet();};
+    $("#f_cancel").onclick=()=>{sheetMode=null;drawSheet();};return;
+  }
+  const K=KINDS[k];
+  const needsWho=k==="taken";
+  sh.innerHTML=`<h2>${esc(K.label)}</h2><div class="sub">${esc(b.title)} · ${LOCS[loc]}</div>
+    <div class="form">
+      ${k==="count"?`<input id="f_qty" type="number" min="0" placeholder="How many are here now" value="${n===null?"":n}">`:`<input id="f_qty" type="number" min="1" value="1" placeholder="How many">`}
+      <div class="two"><input id="f_who" placeholder="${needsWho?"Who took it (name)":"Who / to whom (optional)"}"><input id="f_date" type="date" value="${today()}"></div>
+      <input id="f_note" placeholder="Note (optional)">
+    </div>
+    <button class="primary" id="f_save">Record</button><button class="ghost" id="f_cancel">Back</button>`;
+  $("#f_cancel").onclick=()=>{sheetMode=null;drawSheet();};
+  $("#f_save").onclick=async()=>{
+    const who=$("#f_who").value.trim(),date=$("#f_date").value||today(),note=$("#f_note").value.trim();
+    let amount=parseInt($("#f_qty").value,10);
+    if(k==="count"){if(isNaN(amount)||amount<0){toast("Enter a number");return;}await recordCount(b,amount,who,date,note);}
+    else{
+      if(isNaN(amount)||amount<1){toast("Enter how many");return;}
+      if(needsWho&&!who){toast("Write the name of who took it");return;}
+      const cur=n||0;
+      if(K.delta<0){
+        if(k==="taken"&&amount>cur){toast("Only "+cur+" here");return;}
+        if(k!=="taken"&&cur-amount<1){toast("Keep at least one copy here");return;}
+      }
+      await move(b,k,K.delta*amount,who,date,note);
+      if(k==="moved"){const other=loc==="restaurant"?"ashram":"restaurant";const o=b.qty[other]||0;const nb2={...b,qty:{...b.qty,[loc]:cur-amount,[other]:o+amount}};await saveBook(nb2);await addLogEntry({bookId:b.id,location:other,kind:"added",delta:amount,who,date,note:"from "+LOCS[loc],ts:Date.now()});}
+    }
+    toast("Recorded");sheetMode=null;drawSheet();
+  };
+}
+
+// ---------- writes ----------
+async function move(b,kind,delta,who,date,note){
+  const cur=qtyOf(b)||0;const nq=Math.max(0,cur+delta);
+  const nb={...b,qty:{...(b.qty||{}),[loc]:nq}};
+  await saveBook(nb);
+  await addLogEntry({bookId:b.id,location:loc,kind,delta,who:who||"",date,note:note||"",ts:Date.now(),returned:false});
+}
+async function recordCount(b,val,who,date,note){
+  const nb={...b,qty:{...(b.qty||{}),[loc]:val}};
+  await saveBook(nb);
+  await addLogEntry({bookId:b.id,location:loc,kind:"count",delta:0,newQty:val,who:who||"",date,note:note||"",ts:Date.now()});
+}
+async function quick(id,delta){
+  const b=books[id];if(!b)return;
+  const cur=qtyOf(b);const nq=Math.max(0,(cur||0)+delta);
+  const nb={...b,qty:{...(b.qty||{}),[loc]:nq}};
+  await saveBook(nb);
+  await addLogEntry({bookId:id,location:loc,kind:"count",delta:0,newQty:nq,who:"",date:today(),note:"quick "+(delta>0?"+1":"−1"),ts:Date.now()});
+}
+async function markReturned(logId){
+  const l=logs.find(x=>x.id===logId);if(!l)return;const b=books[l.bookId];if(!b)return;
+  const amount=Math.abs(l.delta||1);
+  const cur=(b.qty&&b.qty[l.location])||0;
+  await saveBook({...b,qty:{...(b.qty||{}),[l.location]:cur+amount}});
+  await call("markReturned",logId);l.returned=true;
+  await addLogEntry({bookId:b.id,location:l.location,kind:"returned",delta:amount,who:l.who||"",date:today(),note:"",ts:Date.now()});render();
+  toast("Returned");
+}
+async function addBook(){
+  const title=$("#f_title").value.trim();if(!title){toast("Title is needed");return;}
+  const qv=parseInt($("#f_qty").value,10);
+  const ref={id:"b"+Date.now().toString(36)};
+  const pn=$("#f_parent").value.trim();const par=pn?Object.values(books).find(x=>x.no===pn&&!x.parent):null;const doc={id:ref.id,title:par?par.title:title,author:par?par.author:$("#f_author").value.trim(),edition:$("#f_edition").value.trim(),...(par?{parent:par.id}:{}),spec:$("#f_spec").value.trim(),no:$("#f_no").value.trim(),group:par?(par.group||"catalogue"):$("#f_group").value,qty:{restaurant:null,ashram:null,[loc]:isNaN(qv)?null:qv}};await call("addBook",doc);books[doc.id]=normBook(doc);render();
+  if(!isNaN(qv))await addLogEntry({bookId:ref.id,location:loc,kind:"count",delta:0,newQty:qv,who:"",date:today(),note:"new book",ts:Date.now()});
+  toast("Added");closeSheet();
+}
+async function exportCsv(){
+  const rows=[["No.","Title","Edition","Author","Details","Group","Restaurant","Ashram"]];
+  Object.values(books).sort((a,b)=>sortKey(a)-sortKey(b)).forEach(b=>rows.push([b.no||"",b.title,b.edition||"",b.author||"",b.spec||"",b.group||"",b.qty?.restaurant??"",b.qty?.ashram??""]));
+  rows.push([]);rows.push(["Date","Location","Book","Movement","Change","Who","Note"]);
+  logs.slice().reverse().forEach(l=>rows.push([l.date||"",LOCS[l.location]||l.location,(books[l.bookId]||{}).title||"",(KINDS[l.kind]||{}).label||l.kind,l.kind==="count"?("→ "+l.newQty):l.delta,l.who||"",l.note||""]));
+  const csv="\uFEFF"+rows.map(r=>r.map(v=>{v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(",")).join("\n");
+  const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="books-"+today()+".csv";document.body.appendChild(a);a.click();a.remove();toast("Exported");
+}
+
+// ---------- events ----------
+let tt;function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1600);}
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button");if(!t)return;
+  try{
+    if(t.dataset.open)openSheet(t.dataset.open);
+    else if(t.dataset.inc)await quick(t.dataset.inc,+1);
+    else if(t.dataset.dec)await quick(t.dataset.dec,-1);
+    else if(t.dataset.return)await markReturned(t.dataset.return);
+    else if(t.dataset.tab){tab=t.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.setAttribute("aria-selected",x===t));render();}
+  }catch(err){toast(err&&err.code==="invalid_argument"?"You can view but not change this list":"Something went wrong");console.error(err);}
+});
+$("#locR").onclick=()=>{loc="restaurant";$("#locR").setAttribute("aria-pressed","true");$("#locA").setAttribute("aria-pressed","false");render();if(openId)drawSheet();};
+$("#locA").onclick=()=>{loc="ashram";$("#locA").setAttribute("aria-pressed","true");$("#locR").setAttribute("aria-pressed","false");render();if(openId)drawSheet();};
+$("#q").addEventListener("input",e=>{q=e.target.value;render();});
+$("#scrim").onclick=closeSheet;
+$("#exportBtn").onclick=exportCsv;
+$("#addBtn").onclick=()=>{openId="__new";sheetMode=null;drawSheet();$("#sheet").classList.add("show");$("#scrim").classList.add("show");};
+
+// ---------- boot ----------
+render();
+refresh();
+setInterval(refresh,20000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh();});
+})();
+</script>
+</body>
+</html>
